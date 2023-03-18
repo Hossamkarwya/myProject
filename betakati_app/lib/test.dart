@@ -1,4 +1,4 @@
 import 'package:flutter/material.dart';
-void  main(List<String> args) {
-  
+MaterialApp  main(List<String> args) {
+  return const MaterialApp();
 }
