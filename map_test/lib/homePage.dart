@@ -11,6 +11,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -20,10 +22,14 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Text('data',
+            style: Theme.of(context).textTheme.bodyText1,
+            ),
             MaterialButton(onPressed: () {
-              
+              Navigator.of(context).pushNamed('/geolocator');
+            }, 
             // ignore: sort_child_properties_last
-            }, child: Text('hhh',
+            child: Text('GeoLocator Page',
             style: Theme.of(context).textTheme.button,
             ),
             color: Theme.of(context).buttonColor,

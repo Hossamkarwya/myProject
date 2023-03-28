@@ -2,7 +2,7 @@ Auther : Hossam Karwya
 App    : Map_Test
 date   : 27-03-2023
 =============================================
-i traning to used google maps And git 
+ I am training to used google maps And git 
 
 =========================================
 packages which used:
@@ -10,6 +10,7 @@ geocoding: ^2.1.0
 google_maps_flutter: ^2.2.5
 flutter_polyline_points: ^1.0.0
 geolocator: ^9.0.2
+awesome_dialog: ^3.0.2
 ======================================
 API Key google platform:
 AIzaSyAax7UxFFIe5B-wzfqzU_o3dDRz4-mftEk
