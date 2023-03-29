@@ -60,4 +60,21 @@ android {
 }
 
 
-================================= test with github ====================
+==================================================================================
+google_maps_flutter: ^2.2.5  //================== Installing =============
+1 - Set the minSdkVersion in android/app/build.gradle:
+android {
+    defaultConfig {
+        minSdkVersion 20
+    }
+}
+2 - Specify your API key in the application manifest android/app/src/main/AndroidManifest.xml:
+<manifest ...
+  <application ...
+    <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyAax7UxFFIe5B-wzfqzU_o3dDRz4-mftEk"/>
+
+
+Get an API key at https://cloud.google.com/maps-platform/. // credentials
+AIzaSyAax7UxFFIe5B-wzfqzU_o3dDRz4-mftEk
+
