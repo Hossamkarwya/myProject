@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_import, deprecated_member_use
+// ignore_for_file: prefer_const_constructors, unused_import, deprecated_member_use, file_names
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';

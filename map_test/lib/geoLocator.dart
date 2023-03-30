@@ -1,11 +1,11 @@
-// ignore_for_file: prefer_const_constructors, unused_import, deprecated_member_use, unused_element, unused_local_variable, unnecessary_brace_in_string_interps
+// ignore_for_file: prefer_const_constructors, unused_import, deprecated_member_use, unused_element, unused_local_variable, unnecessary_brace_in_string_interps, sized_box_for_whitespace, unnecessary_null_comparison, avoid_print, prefer_typing_uninitialized_variables, file_names
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'dart:io';//=============== currentLocation initaiztion ===================
+import 'dart:io'; //=============== currentLocation initaiztion ===================
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -24,60 +24,93 @@ class _GeoLocatorPageState extends State<GeoLocatorPage> {
   dynamic placeStreet;
   dynamic placePostalCode;
   late Position currentLocation;
-  bool showText= false;
-  bool? serviceEnabled;                 
+  var lat;
+  var long;
+  bool showText = false;
+  bool? serviceEnabled;
   LocationPermission? permission;
-//=== Determine the current position of your device 
-Future determinedPosition() async {
-  
- //=========== check services =================
-  serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if(serviceEnabled == false){
-    // ignore: use_build_context_synchronously
-    AwesomeDialog(
-            context: context,
-            dialogType: DialogType.info,
-            animType: AnimType.rightSlide,
-            title: 'Services',
-            desc: 'Services position not Enabled',
-          
-            ).show();
+  late CameraPosition _kGooglePlex;
+  late GoogleMapController gmc;  //=for controller =============
+  setMarkerImage()async{
+    setState(() {
+      
+    });
+    myMarker.add(Marker(
+      icon: await BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, 'images/elHarm.png'),
+      draggable: true,
+      markerId: MarkerId('2'),position: LatLng(21.422529 , 39.825970),
+    infoWindow: InfoWindow(title: 'El Haram')),);
   }
-  //============ check permission =============
-  permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission != LocationPermission.denied) {
-            getLatLong();
+   late Set<Marker> myMarker = {
+    Marker(
+      draggable: true,
+      onDragEnd: (LatLng value) {
+        // to do ===================
+        print(value);
+      },
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
+      markerId: MarkerId('1'),position: LatLng(lat, long),
+    infoWindow: InfoWindow(title: 'My Location')),
 
-          }
+    
+    
+  };
+
+//=== Determine the current position of your device
+  Future determinedPosition() async {
+    //=========== check services =================
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (serviceEnabled == false) {
+      // ignore: use_build_context_synchronously
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.info,
+        animType: AnimType.rightSlide,
+        title: 'Services',
+        desc: 'Services position not Enabled',
+      ).show();
+    }
+    //============ check permission =============
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.denied) {
+        getLatLong();
       }
-  
-  setState(() {});
-}
-
+    }
+    setState(() {});
+  }
 
 //=======function to get  Current position==============
- Future<Position> getLatLong() async{
- return await Geolocator.getCurrentPosition().then((value) => value);
-}
-@override
+  Future<void> getLatLong() async {
+    currentLocation =
+        await Geolocator.getCurrentPosition().then((value) => value);
+    lat = currentLocation.latitude;
+    long = currentLocation.longitude;
+    //====== CameraPosition ===========
+      _kGooglePlex = CameraPosition(
+      target: LatLng(lat, long),
+      zoom: 16.4746,
+    );
+    setState(() {});
+  }
+
+  @override
   void initState() {
+    setMarkerImage();
+    getLatLong();
     determinedPosition();
     super.initState();
   }
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
 
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
   
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      appBar: AppBar(title: Text('GeoLocator'),),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('GeoLocator'),
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Container(
@@ -86,88 +119,152 @@ Future determinedPosition() async {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                showText == false ? Text('') :
-                Text('Services Enabled : $serviceEnabled', style: Theme.of(context).textTheme.bodyText1,),
-                showText == false ? Text('') :
-                Text('$permission',
-                style: Theme.of(context).textTheme.bodyText1,
+                showText == false
+                    ? Text('')
+                    : Text(
+                        'Services Enabled : $serviceEnabled',
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                showText == false
+                    ? Text('')
+                    : Text(
+                        '$permission',
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                MaterialButton(
+                  onPressed: () {
+                    setState(() {
+                      showText = true;
+                    });
+                    determinedPosition();
+                    // ignore: sort_child_properties_last
+                  },
+                  child: Text(
+                    'ckeck the service enabled',
+                    style: Theme.of(context).textTheme.button,
+                  ),
+                  color: Theme.of(context).buttonColor,
                 ),
-                MaterialButton(onPressed: () {
-                  setState(() {
-                   showText = true;
-                  });
-                  determinedPosition();
-                // ignore: sort_child_properties_last
-                }, child: Text('ckeck the service enabled',
-                style: Theme.of(context).textTheme.button,
+                MaterialButton(
+                  onPressed: () {
+                    setState(() {
+                      showText = false;
+                    });
+                    determinedPosition();
+                    // ignore: sort_child_properties_last
+                  },
+                  child: Text(
+                    'Clear',
+                    style: Theme.of(context).textTheme.button,
+                  ),
+                  color: Theme.of(context).buttonColor,
                 ),
-                color: Theme.of(context).buttonColor,
+                MaterialButton(
+                  onPressed: () async {
+                    getLatLong();
+                    print(currentLocation.latitude);
+                    print(currentLocation.longitude);
+                    showText = true;
+
+                    //============= get information of my location ============
+                    List<Placemark> placemarks = await placemarkFromCoordinates(
+                        currentLocation.latitude, currentLocation.longitude);
+                    setState(() {
+                      placeCountry = placemarks[0].country;
+                      placeAdministrativeArea =
+                          placemarks[0].administrativeArea;
+                      placeLocality = placemarks[0].locality;
+                      placeStreet = placemarks[0].street;
+                      placePostalCode = placemarks[0].postalCode;
+                    });
+                    print(placeCountry);
+
+                    // ignore: sort_child_properties_last
+                  },
+                  child: Text(
+                    'Current Position',
+                    style: Theme.of(context).textTheme.button,
+                  ),
+                  color: Theme.of(context).buttonColor,
                 ),
-                MaterialButton(onPressed: () {
-                  setState(() {
-                    showText = false;
-                  });
-                  determinedPosition();
-                // ignore: sort_child_properties_last
-                }, child: Text('Clear',
-                style: Theme.of(context).textTheme.button,
-                ),
-                color: Theme.of(context).buttonColor,
-                ),
-                MaterialButton(onPressed: () async{
-                  currentLocation = await getLatLong();
-                  print(currentLocation.latitude);
-                  print(currentLocation.longitude);
-                  showText = true;
-                  
-          
-                  //============= get information of my location ============
-                  List<Placemark> placemarks = await placemarkFromCoordinates(currentLocation.latitude, currentLocation.longitude);
-                  setState(() {
-                    placeCountry = placemarks[0].country;
-                    placeAdministrativeArea = placemarks[0].administrativeArea;
-                    placeLocality = placemarks[0].locality;
-                    placeStreet = placemarks[0].street;
-                    placePostalCode = placemarks[0].postalCode;
-                  });
-                  print(placeCountry);
-          
-                  
-                // ignore: sort_child_properties_last
-                }, child: Text('Current Position',
-                style: Theme.of(context).textTheme.button,
-                ),
-                color: Theme.of(context).buttonColor,
-                ),
-                showText == false ? Text(''):
-                Text('Latitude : ${currentLocation.latitude}',style: TextStyle(fontSize: 18),),
-                showText == false ? Text(''):
-                Text('Longitude : ${currentLocation.longitude}',style: TextStyle(fontSize: 18),),
-                showText == false ? Text(''):
-                Text('Country : $placeCountry',style: TextStyle(fontSize: 18),),
-                showText == false ? Text(''):
-                Text('AdministrativeArea : $placeAdministrativeArea',style: TextStyle(fontSize: 18),),
-                showText == false ? Text(''):
-                Text('Locality : $placeLocality',style: TextStyle(fontSize: 18),),
-                showText == false ? Text(''):
-                Text('Street : $placeStreet',style: TextStyle(fontSize: 18),),
-                showText == false ? Text(''):
-                Text('PostalCode : $placePostalCode',style: TextStyle(fontSize: 18),),
-                Container(
-                  height: 400,
-                  width: 300,
-                  child:  GoogleMap(
-                           mapType: MapType.hybrid,
-                           initialCameraPosition: _kGooglePlex,
-                           onMapCreated: (GoogleMapController controller) {
-                          _controller.complete(controller);
-         },
-      ),
-                ),
-          
-          
+                showText == false
+                    ? Text('')
+                    : Text(
+                        'Latitude : ${currentLocation.latitude}',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                showText == false
+                    ? Text('')
+                    : Text(
+                        'Longitude : ${currentLocation.longitude}',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                showText == false
+                    ? Text('')
+                    : Text(
+                        'Country : $placeCountry',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                showText == false
+                    ? Text('')
+                    : Text(
+                        'AdministrativeArea : $placeAdministrativeArea',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                showText == false
+                    ? Text('')
+                    : Text(
+                        'Locality : $placeLocality',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                showText == false
+                    ? Text('')
+                    : Text(
+                        'Street : $placeStreet',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                showText == false
+                    ? Text('')
+                    : Text(
+                        'PostalCode : $placePostalCode',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                _kGooglePlex == null
+                    ? CircularProgressIndicator()
+                    : Container(
+                      padding: EdgeInsets.symmetric(vertical: 10.0),
+                        height: 600,
+                        width: double.infinity,
+                        child: GoogleMap(
+                          markers: myMarker,
+                          
+                          mapType: MapType.normal,
+                          initialCameraPosition: _kGooglePlex,
+                          onMapCreated: (GoogleMapController controller) {
+                            gmc = controller;
+                          },
+                        ),
+                      ),
+                      Center(
+                        child: MaterialButton(
+                          color: Theme.of(context).buttonColor,
+                          onPressed: () {
+                            setMarkerImage();
+                            //=== go to new location ===================(El Haram)
+                            LatLng latLong =LatLng(21.422529 , 39.825970);
+                            gmc.animateCamera(CameraUpdate.newCameraPosition(
+                              CameraPosition(
+                                target: latLong,
+                                zoom: 16.0,
+                                tilt: 45,
+                                bearing: 45,
+                                )
+                            ));
+                          },
+                          child: Text('Go to El Haram',style: Theme.of(context).textTheme.bodyMedium,),
+                        ),
+                      ),
               ],
-                
             ),
           ),
         ),
@@ -176,8 +273,6 @@ Future determinedPosition() async {
   }
 }
 
-
-
-
 //====================================== by geolocator ====================
 // Services     and Permissions
+// 21.422529 , 39.825970   El Haram

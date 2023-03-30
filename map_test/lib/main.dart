@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, duplicate_ignore, deprecated_member_use
+// ignore_for_file: prefer_const_constructors, duplicate_ignore, deprecated_member_use, unused_import
 
 import 'package:flutter/material.dart';
 import 'package:map_test/geoLocator.dart';
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       ),
       
       routes: {
-        '/'   :(context) => HomePage(),
+        '/'   :(context) => GeoLocatorPage(),
         '/geolocator'   :(context) => GeoLocatorPage(),
       },
     );
