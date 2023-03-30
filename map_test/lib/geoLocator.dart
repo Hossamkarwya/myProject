@@ -36,7 +36,8 @@ class _GeoLocatorPageState extends State<GeoLocatorPage> {
       
     });
     myMarker.add(Marker(
-      icon: await BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, 'images/elHarm.png'),
+      //icon: await BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, 'images/logo.png'),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
       draggable: true,
       markerId: MarkerId('2'),position: LatLng(21.422529 , 39.825970),
     infoWindow: InfoWindow(title: 'El Haram')),);
