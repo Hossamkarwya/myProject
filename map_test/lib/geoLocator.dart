@@ -43,19 +43,10 @@ class _GeoLocatorPageState extends State<GeoLocatorPage> {
     infoWindow: InfoWindow(title: 'El Haram')),);
   }
    late Set<Marker> myMarker = {
-    Marker(
-      draggable: true,
-      onDragEnd: (LatLng value) {
-        // to do ===================
-        print(value);
-      },
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
-      markerId: MarkerId('1'),position: LatLng(lat, long),
-    infoWindow: InfoWindow(title: 'My Location')),
-
-    
     
   };
+  //=============== for Live Location ==============
+  late StreamSubscription<Position> positionStream;
 
 //=== Determine the current position of your device
   Future determinedPosition() async {
@@ -93,11 +84,39 @@ class _GeoLocatorPageState extends State<GeoLocatorPage> {
       target: LatLng(lat, long),
       zoom: 16.4746,
     );
+    myMarker.add(Marker(
+      draggable: true,
+      onDragEnd: (LatLng value) {
+        // to do ===================
+        print(value);
+      },
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
+      markerId: MarkerId('1'),position: LatLng(lat, long),
+    infoWindow: InfoWindow(title: 'My Location')),);
     setState(() {});
+  }
+
+  //================================= Live Location ============
+  changeMarker(newLat , newLong){
+    //======== to move marker =================
+    
+    myMarker.clear();
+    myMarker.add(Marker(markerId: MarkerId('1'),position: LatLng(newLat, newLong)));
+    //========== to move map =================
+    gmc.animateCamera(CameraUpdate.newLatLng(LatLng(newLat, newLong)));
+    setState(() {
+                              
+    });
+
   }
 
   @override
   void initState() {
+    //============ Streem ===================
+    positionStream = Geolocator.getPositionStream().listen(
+    (Position position) {
+         changeMarker(position.latitude , position.longitude);
+    });
     setMarkerImage();
     getLatLong();
     determinedPosition();
@@ -238,7 +257,9 @@ class _GeoLocatorPageState extends State<GeoLocatorPage> {
                         width: double.infinity,
                         child: GoogleMap(
                           markers: myMarker,
-                          
+                          onTap: (argument) {  //===== to move marker icon ================
+                            
+                          },
                           mapType: MapType.normal,
                           initialCameraPosition: _kGooglePlex,
                           onMapCreated: (GoogleMapController controller) {
